@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+
+# Nix
+.direnv
+result
