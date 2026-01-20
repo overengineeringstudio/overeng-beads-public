@@ -1,4 +1,10 @@
-{ beadsPrefix, beadsRepoName }: { pkgs, ... }: {
+{ beadsPrefix, beadsRepoName }: { pkgs, config, ... }: {
+  # Export BEADS_DB and BEADS_PREFIX for shell use (bd commands)
+  enterShell = ''
+    export BEADS_DB="$PWD/../${beadsRepoName}/.beads/beads.db"
+    export BEADS_PREFIX="${beadsPrefix}"
+  '';
+
   git-hooks.hooks.beads-commit-correlation = {
     enable = true;
     entry = "${pkgs.writeShellScript "beads-post-commit" ''
