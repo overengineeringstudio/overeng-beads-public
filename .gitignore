@@ -4,3 +4,4 @@
 # Nix
 .direnv
 result
+.envrc.*
