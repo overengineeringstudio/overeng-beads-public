@@ -6,7 +6,7 @@
 
   outputs = { nixpkgs, ... }: {
     # Devenv module for commit correlation
-    # Usage: imports = [ (inputs.overeng-beads-public.devenvModules.beads { beadsPrefix = "eu"; beadsRepoName = "overeng-beads-public"; }) ];
+    # Usage: imports = [ (inputs.overeng-beads-public.devenvModules.beads { beadsPrefix = "oep"; beadsRepoName = "overeng-beads-public"; }) ];
     devenvModules.beads = import ./nix/devenv-module.nix;
   };
 }
