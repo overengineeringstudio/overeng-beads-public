@@ -1,11 +1,14 @@
 # Beads devenv module — integrates beads issue tracking with devenv.
 #
-# Runs beads in daemon mode (SQLite DB + JSONL auto-sync). The daemon:
+# When enableDaemon = true (default), runs beads with daemon mode:
 # - Serializes concurrent access via RPC (safe for multiple workspaces)
-# - Auto-flushes DB changes to JSONL
+# - Auto-flushes DB changes to JSONL (event-driven)
 # - Auto-imports when JSONL is newer (e.g. after commit-correlation hook writes)
-# - Auto-commits + auto-pushes JSONL changes to git
-# - Auto-pulls remote changes
+# - Auto-commits JSONL changes to the sync branch
+# - Auto-pulls remote changes (every 30s)
+#
+# Git push is NOT handled by the daemon (upstream detection doesn't work
+# reliably in bare+worktree git layouts). Use `dt beads:sync` to push.
 #
 # The SQLite DB is gitignored (.beads/.gitignore) — JSONL remains the
 # git-portable source of truth. Multiple megarepo workspaces sharing the
@@ -16,7 +19,7 @@
 # - bd() shell wrapper (runs bd from the beads repo)
 # - beads:daemon:ensure task — starts daemon if not running (idempotent)
 # - beads:daemon:stop task — stops daemon (cleanup)
-# - beads:sync task — manual full sync (fallback, rarely needed with daemon)
+# - beads:sync task — push JSONL changes to remote
 # - beads-commit-correlation git hook — cross-references commits with beads issues
 #
 # Parameters:
@@ -50,6 +53,8 @@ in
 
   # beads:daemon:ensure — Start daemon if not running. Idempotent: if another
   # workspace already started a daemon for this repo, this is a no-op.
+  # The daemon auto-commits to the sync branch and auto-pulls from remote.
+  # Git push is handled separately by beads:sync (see note in module header).
   tasks."beads:daemon:ensure" = {
     description = "Ensure beads daemon is running with auto-sync";
     after = [ "megarepo:sync" ];
@@ -65,14 +70,14 @@ in
 
       # If daemon already running (e.g. started by another workspace), skip
       if bd daemon status >/dev/null 2>&1; then
-        echo "[beads] Daemon already running."
         exit 0
       fi
 
-      # Start daemon in background with auto-sync
-      echo "[beads] Starting daemon with auto-sync..."
-      bd daemon start --auto-commit --auto-push --auto-pull 2>&1
-      echo "[beads] Daemon started."
+      # Start daemon in background with auto-commit + auto-pull.
+      # NOTE: --auto-push is not used because beads' upstream detection
+      # doesn't work reliably in megarepo's bare+worktree git layout.
+      # Git push is handled by the beads:sync task instead.
+      bd daemon start --auto-commit --auto-pull 2>&1 || true
     '' else ''
       exit 0
     '';
@@ -90,29 +95,19 @@ in
       BEADS_REPO="$DEVENV_ROOT/${beadsRepoRelPath}"
       [ ! -d "$BEADS_REPO/.beads" ] && exit 0
       cd "$BEADS_REPO"
-      bd daemon stop 2>&1 || true
+      bd daemons stop . 2>&1 || true
       echo "[beads] Daemon stopped."
     '';
   };
 
-  # beads:sync — Manual full sync. With daemon mode, this is rarely needed
-  # since the daemon auto-syncs. Useful as explicit sync or fallback.
+  # beads:sync — Push JSONL changes to remote.
+  # With daemon mode, the daemon handles auto-commit to the sync branch
+  # and auto-pull from remote. This task handles the git push that the
+  # daemon can't do (see module header for details).
   tasks."beads:sync" = {
-    description = "Sync beads: pull + export + commit + push";
+    description = "Sync beads: commit + push JSONL changes to remote";
     after = [ "megarepo:sync" ];
-    exec = if enableDaemon then ''
-      BEADS_REPO="$DEVENV_ROOT/${beadsRepoRelPath}"
-
-      if [ ! -d "$BEADS_REPO/.beads" ]; then
-        echo "[beads] Beads repo not found at ${beadsRepoRelPath}." >&2
-        exit 1
-      fi
-
-      cd "$BEADS_REPO"
-      echo "[beads] Running full sync..."
-      bd sync --full 2>&1
-      echo "[beads] Sync complete."
-    '' else ''
+    exec = ''
       BEADS_REPO="$DEVENV_ROOT/${beadsRepoRelPath}"
 
       if [ ! -d "$BEADS_REPO/.beads" ]; then
