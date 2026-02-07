@@ -37,10 +37,6 @@
 # Debounce interval for auto-flush (can also use BEADS_FLUSH_DEBOUNCE)
 # flush-debounce: "5s"
 
-# Git branch for beads sync commits. Must differ from working branch — beads
-# uses a temporary git worktree for atomic sync operations.
-# Can also use BEADS_SYNC_BRANCH env var for local override.
-sync-branch: "beads-sync"
 
 # Multi-repo configuration (experimental - bd-307)
 # Allows hydrating from multiple repositories and routing writes to the correct JSONL
