@@ -35,7 +35,7 @@ inputs:
 { inputs, ... }: {
   imports = [
     (inputs.overeng-beads-public.devenvModules.beads {
-      beadsPrefix = "eu";           # Issue prefix (e.g. eu-abc123)
+      beadsPrefix = "oep";          # Issue prefix (e.g. oep-abc123)
       beadsRepoName = "overeng-beads-public";  # Beads repo name (peer in same parent dir)
     })
   ];
@@ -45,7 +45,7 @@ inputs:
 3. Reference issues in commit messages using parenthesized format:
 
 ```bash
-git commit -m "Add retry logic (eu-abc123)"
+git commit -m "Add retry logic (oep-abc123)"
 ```
 
 The post-commit hook will automatically add a comment to the referenced beads issue.
@@ -54,7 +54,7 @@ The post-commit hook will automatically add a comment to the referenced beads is
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
-| `beadsPrefix` | Yes | Issue prefix (e.g. `eu`, `sch`) |
+| `beadsPrefix` | Yes | Issue prefix (e.g. `oep`, `sch`; `eu` is legacy) |
 | `beadsRepoName` | Yes | Name of the beads repo, assumed to be a peer directory |
 
 ### How It Works
