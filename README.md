@@ -54,7 +54,7 @@ The post-commit hook will automatically add a comment to the referenced beads is
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
-| `beadsPrefix` | Yes | Issue prefix (e.g. `oep`, `sch`; `eu` is legacy) |
+| `beadsPrefix` | Yes | Issue prefix (e.g. `oep`, `sch`) |
 | `beadsRepoName` | Yes | Name of the beads repo, assumed to be a peer directory |
 
 ### How It Works
