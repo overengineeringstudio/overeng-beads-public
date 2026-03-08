@@ -44,7 +44,7 @@ cp -rf source dest          # NOT: cp -r source dest
 ### Why bd?
 
 - Dependency-aware: Track blockers and relationships between issues
-- Git-friendly: Auto-syncs to JSONL for version control
+- Version-controlled: Built on Dolt with cell-level merge
 - Agent-optimized: JSON output, ready work detection, discovered-from links
 - Prevents duplicate tracking systems and confusion
 
@@ -121,8 +121,6 @@ bd automatically syncs with git:
 
 For more details, see README.md and docs/QUICKSTART.md.
 
-<!-- END BEADS INTEGRATION -->
-
 ## Landing the Plane (Session Completion)
 
 **When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
@@ -148,3 +146,5 @@ For more details, see README.md and docs/QUICKSTART.md.
 - NEVER stop before pushing - that leaves work stranded locally
 - NEVER say "ready to push when you are" - YOU must push
 - If push fails, resolve and retry until it succeeds
+
+<!-- END BEADS INTEGRATION -->

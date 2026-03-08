@@ -1,3 +1,7 @@
 {
-	"jsonl_export": "issues.jsonl"
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "oep",
+  "project_id": "2a797283-3f2b-4ebe-a853-2e2b093ea6ba"
 }

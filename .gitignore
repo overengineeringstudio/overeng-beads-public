@@ -5,3 +5,7 @@
 .direnv
 result
 .envrc.*
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db
