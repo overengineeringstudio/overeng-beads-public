@@ -13,3 +13,5 @@ issue-prefix: "oep"
 #   additional:   # Additional repos to hydrate from (read-only)
 #     - ~/beads-planning  # Personal planning repo
 #     - ~/work-planning   # Work planning repo
+
+backup.git-push: true
